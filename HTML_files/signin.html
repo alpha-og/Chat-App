@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="data.css" />
+    <link rel="stylesheet" href="signin.css" />
+
+    <!-- <script defer src="signin.js"></script> -->
+    <script
+      src="https://kit.fontawesome.com/b82ab904a9.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>Chat App | Sign In</title>
+  </head>
+  <body>
+    <div class="div-form_container">
+      <i class="fa-regular fa-user fa-6x"></i>
+      <h4>Sign In</h4>
+      <form action="/signin" method="POST">
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          name="email"
+          id="input-email"
+          placeholder="johndoe@gmail.com"
+        />
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          name="password"
+          id="input-password"
+          placeholder="password"
+        />
+        <button type="submit">Sign In</button>
+      </form>
+      <button onclick="window.location.href='/signup'">Sign Up</button>
+    </div>
+  </body>
+</html>
