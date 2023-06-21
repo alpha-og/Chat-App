@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="/CSS_files/reset.css" />
-    <link rel="stylesheet" href="/CSS_files/data.css" />
-    <link rel="stylesheet" href="/CSS_files/home.css" />
+    <link rel="stylesheet" href="reset.css" />
+    <link rel="stylesheet" href="data.css" />
+    <link rel="stylesheet" href="home.css" />
+
+    <script defer src="home.js"></script>
 
     <title>Chat App</title>
   </head>
@@ -17,7 +19,7 @@
         <p>Sign Out</p>
       </div>
     </div>
-    <div class="div-create_chat_dialogue_container">
+    <!-- <div class="div-create_chat_dialogue_container">
       <div class="div-create_chat_dalogue">
         <h4>Create a new chat</h4>
         <div class="div-chat_search_bar">
@@ -29,7 +31,7 @@
         <div class="div-chat_search_responses">
           <div class="div-chat_search_response">
             <div class="div-person_details">
-              <img src="source" alt="pfp" />
+              <img src="" alt="pfp" />
               <p>Name</p>
             </div>
             <button id="button-create_chat" class="button-icon_container">
@@ -38,7 +40,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="div-left_container">
       <div class="div-utility_bar">
         <button id="button-user_profile" class="button-icon_container">
@@ -52,7 +54,7 @@
         <div class="div-chat_preview">
           <div class="div-chat_details_preview">
             <div class="div-recipient_details">
-              <img src="" alt="profile picture" />
+              <img src="" alt="pfp" />
               <p>Name</p>
             </div>
             <i data-lucide="more-vertical"></i>
@@ -85,6 +87,7 @@
           type="text"
           name="input_msg"
           id="input_msg"
+          placeholder="Type something..."
         />
         <button class="button-icon_container">
           <i data-lucide="send"></i>
