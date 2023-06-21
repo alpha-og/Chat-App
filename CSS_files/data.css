@@ -1,0 +1,9 @@
+:root{
+    --primary-colour: #22223b;
+    --secondary-colour: #4a4e69;
+    --accent-colour: #4e4ea5;
+    --default-text-colour: #121212;
+    --default-text-inverse-colour: #f4f4f4;
+    --success-colour: rgb(50, 218, 143);
+    --failure-color: rgb(199, 38, 38);
+}

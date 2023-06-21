@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/CSS_files/reset.css" />
+    <link rel="stylesheet" href="/CSS_files/data.css" />
+    <link rel="stylesheet" href="/CSS_files/home.css" />
+
+    <title>Chat App</title>
+  </head>
+  <body>
+    <div class="div-left_container">
+      <div class="div-utility_bar">
+        <button class="div-profile_icon_container">
+          <i data-lucide="user-circle"></i>
+        </button>
+        <button class="div-add_chat_container">
+          <i data-lucide="plus"></i>
+        </button>
+      </div>
+      <div class="div-chats_container">
+        <div class="div-chat_preview">
+          <div class="div-chat_details_preview">
+            <img src="" alt="profile picture" />
+            <p></p>
+          </div>
+          <div class="div-chat_msg_preview"></div>
+        </div>
+      </div>
+    </div>
+    <div class="div-right_container">
+      <div class="div-chat_details_main"></div>
+      <div class="div-chat_main">
+        <div class="div-chat_bubble_container sender">
+          <div class="div-chat_bubble sender"></div>
+        </div>
+      </div>
+      <div class="div-chat_send_msg_container">
+        <input
+          class="div-chat_send_msg_input"
+          type="text"
+          name="input_msg"
+          id="input_msg"
+        />
+        <button class="button-chat_send_msg_btn">
+          <i class="fa-regular fa-paper-plane fa-2x"></i>
+        </button>
+      </div>
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
