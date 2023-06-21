@@ -11,32 +11,74 @@
     <title>Chat App</title>
   </head>
   <body>
+    <div class="div-profile_options">
+      <div class="div-profile_option">
+        <i data-lucide="log-out"></i>
+        <p>Sign Out</p>
+      </div>
+    </div>
+    <div class="div-create_chat_dialogue_container">
+      <div class="div-create_chat_dalogue">
+        <h4>Create a new chat</h4>
+        <div class="div-chat_search_bar">
+          <input type="text" name="chat_search" id="input-chat_search" />
+          <button id="button-search_chat">
+            <i data-lucide="search"></i>
+          </button>
+        </div>
+        <div class="div-chat_search_responses">
+          <div class="div-chat_search_response">
+            <div class="div-person_details">
+              <img src="source" alt="pfp" />
+              <p>Name</p>
+            </div>
+            <button id="button-create_chat" class="button-icon_container">
+              <i data-lucide="plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="div-left_container">
       <div class="div-utility_bar">
-        <button class="div-profile_icon_container">
+        <button id="button-user_profile" class="button-icon_container">
           <i data-lucide="user-circle"></i>
         </button>
-        <button class="div-add_chat_container">
+        <button id="button-create_new_chat" class="button-icon_container">
           <i data-lucide="plus"></i>
         </button>
       </div>
       <div class="div-chats_container">
         <div class="div-chat_preview">
           <div class="div-chat_details_preview">
-            <img src="" alt="profile picture" />
-            <p></p>
+            <div class="div-recipient_details">
+              <img src="" alt="profile picture" />
+              <p>Name</p>
+            </div>
+            <i data-lucide="more-vertical"></i>
           </div>
           <div class="div-chat_msg_preview"></div>
         </div>
       </div>
     </div>
     <div class="div-right_container">
-      <div class="div-chat_details_main"></div>
+      <div class="div-chat_details_main div-utility_bar">
+        <button id="button-recipient_profile" class="button-icon_container">
+          <i data-lucide="user-circle"></i>
+        </button>
+        <button id="button-recipient_more" class="button-icon_container">
+          <i data-lucide="more-vertical"></i>
+        </button>
+      </div>
       <div class="div-chat_main">
         <div class="div-chat_bubble_container sender">
           <div class="div-chat_bubble sender"></div>
         </div>
+        <div class="div-chat_bubble_container receiver">
+          <div class="div-chat_bubble receiver"></div>
+        </div>
       </div>
+
       <div class="div-chat_send_msg_container">
         <input
           class="div-chat_send_msg_input"
@@ -44,8 +86,8 @@
           name="input_msg"
           id="input_msg"
         />
-        <button class="button-chat_send_msg_btn">
-          <i class="fa-regular fa-paper-plane fa-2x"></i>
+        <button class="button-icon_container">
+          <i data-lucide="send"></i>
         </button>
       </div>
     </div>
