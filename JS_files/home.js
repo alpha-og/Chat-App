@@ -1,6 +1,8 @@
 const buttonCNC = document.querySelector("button#button-create_new_chat"); // CNC - Create New Chat
+const buttonPO = document.querySelector("button#button-user_profile") // PO — Profile Options
 
 buttonCNC.addEventListener("click", addCreateChatDialogue);
+buttonPO.addEventListener("click", addProfileOptionsDialogue);
 
 function addCreateChatDialogue(){
     const ccdc = document.createElement("div"); //ccdc -  Create Chat Dialogue Container
@@ -34,5 +36,46 @@ function addCreateChatDialogue(){
         .then(data => console.log(data))
         .catch((err) => console.log(err));
 
+    })
+}
+
+function addProfileOptionsDialogue(){
+    const pod = document.createElement("div"); //po -  Create Chat Dialogue Container
+    pod.className = "div-profile_options_dialogue";
+    pod.innerHTML = `
+        <div id="profile_option-back" class="div-profile_option">
+            <i data-lucide="arrow-left"></i>
+            <p>Back</p>
+        </div>
+        <div id="profile_option-signout" class="div-profile_option">
+            <i data-lucide="log-out"></i>
+            <p>Sign Out</p>
+        </div>
+  `
+    document.body.prepend(pod);
+
+    const optionBack = document.querySelector("div#profile_option-back");
+    const optionSignout = document.querySelector("div#profile_option-signout");
+
+    optionBack.addEventListener("click", () =>{
+        pod.remove()
+        console.log("Going back")
+    })
+    optionSignout.addEventListener("click", () => {
+        pod.remove()
+        fetch("/signout", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(JSON.parse(localStorage.getItem("session"))),
+        })
+        .then((res) =>{
+            localStorage.clear()
+            window.location.href = "/signin";
+        })
+        .catch((err) => {
+            console.log(err)
+        })
     })
 }

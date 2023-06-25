@@ -9,6 +9,9 @@ const { v4: uuidv4 } = require('uuid'); // required for creating unique user ids
 const bcryptjs = require("bcryptjs"); // required for encrypting data and passwords
 const bodyParser = require('body-parser'); // required for parsing request bodies
 
+// model module imports
+const userModel = require('./models/userModel');
+
 // global constant declarations
 const port = 8000;
 const mongoURI = "mongodb://localhost:27017/";
@@ -29,87 +32,14 @@ mongoose.connect(mongoURI+dbName, {
 })
 .catch((err) => console.log(err));
 
-// define the document structure nested document "chats"
-const msgSchema = mongoose.Schema({
-    msg_uuid: {
-        type: 'UUID',
-        default: uuidv4,
-    },
-    origin: {
-        type: 'UUID',
-        required: true,
-    },
-    msg_sent:{
-        type: Date,
-        default: Date.now,
-    },
-    msg_content: {
-        type: String,
-        required: true,
-    }
-}, { _id : false });
+// implementing middleware
+app.use(express.static("HTML_files")); // folder for static serving
+app.use(express.static("CSS_files")); // folder for static serving
+app.use(express.static("JS_files")); // folder for static serving
 
-// define the document structure nested document "chats"
-const chatSchema = mongoose.Schema({
-    chat_uuid: {
-        type: 'UUID',
-        default: uuidv4,
-    },
-    chat_created:{
-        type: Date,
-        default: Date.now,
-    },
-    msgs: {
-        type: msgSchema,
-    }
-}, { _id : false });
-
-// define the document structure for document "Users"
-const userSchema = mongoose.Schema({
-    uuid: {
-        type: 'UUID',
-        default: uuidv4,
-    },
-    fname: {
-        type: String,
-        required: true,
-    },
-    username: String,
-    email: {
-        type: String,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    signupDate: {
-        type: Date,
-        default: Date.now
-    },
-    chats: {
-        type: chatSchema,
-    },
-})
-
-// create a mongoose model (an interface/ wrapper of schema with mongodb) for collection "Users"
-// the model method implicitly creates a collection with specified name (the name passed is converted to plural form if it is in singular form)
-const User = new mongoose.model("User", userSchema) // returns a document object constructor using the passed schema
-
-// folders for static serving
-app.use(express.static("HTML_files"));
-app.use(express.static("CSS_files"));
-app.use(express.static("JS_files"));
-
-// enable the server to parse the body
-app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(bodyParser.urlencoded({ extended: false })); // enable the server to parse the body
+app.use(express.json())
 // get routes
-app.get("/home", (req, res) => {
-    const filePath = path.join(__dirname,"HTML_files", "home.html");
-    res.sendFile(filePath);
-});
-
 app.get("/signup", (req, res) => {
     const filePath = path.join(__dirname,"HTML_files", "signup.html");
     res.sendFile(filePath);
@@ -120,19 +50,37 @@ app.get("/signin", (req, res) => {
     res.sendFile(filePath);
 });
 
+app.get("/home", (req, res) => {
+    const filePath = path.join(__dirname,"HTML_files", "home.html");
+    res.sendFile(filePath);
+});
+
 // post routes
 app.post("/signup", async (req, res) => {
     const {fname, email, password, confirmPassword} = req.body;
     const validInputs = validateName(fname) && validateEmail(email) && validatePassword(password, confirmPassword);
+    const hashedPassword = await bcryptjs.hash(password, 14);
     if (validInputs){
-        const user = new User({
+        const user = new userModel({
             fname: fname,
             email: email,
-            password: bcryptjs.hash(password)
+            password: hashedPassword,
         })
-        let result = await user.save();
-        console.log(result);
-        res.redirect("/signin");
+        user.save()
+        .then((result) => {
+            // console.log(result)
+            res.redirect("/signin");
+        })
+        .catch((err) => {
+            switch (err.code) {
+                case 11000:
+                    res.send("User with provided email already exists");
+                    break;
+                default:
+                    console.log(err.message)
+                    break;
+            }
+        })
     }
     else {
         console.log("error")
@@ -141,10 +89,13 @@ app.post("/signup", async (req, res) => {
 
 app.post("/signin", async (req, res) => {
     const {email, password} = req.body;
-    const currentUser = await User.findOne({email: email});
+    let currentUser = await userModel.findOne({email: email});
     if (currentUser){
-        if (currentUser.password === password){
-            res.redirect("/home")
+        const match = await bcryptjs.compare(password, currentUser.password)
+        if (match){
+            const result = await userModel.updateOne({uuid: currentUser.uuid}, {session: {session_uuid: uuidv4(), isAuth: true}})
+            currentUser = await userModel.findOne({email: email});
+            res.json({uuid: currentUser.uuid, session_uuid: currentUser.session.session_uuid, isAuth: currentUser.session.isAuth})
         }
         else{
             console.log("Invalid email or password")
@@ -154,6 +105,15 @@ app.post("/signin", async (req, res) => {
         console.log("Invalid email or password")
     }
 });
+
+app.post("/signout", async (req, res) => {
+    const {uuid, session_uuid, isAuth} = req.body;
+    const currentUser = await userModel.findOne({uuid: uuid});
+    if (currentUser.session.session_uuid === session_uuid){
+        const result = await userModel.updateOne({uuid: uuid}, {session: {session_uuid: null, session_created: null, isAuth: false}})
+        res.redirect("/signin");
+    }
+})
 
 function validateName(name){
     const regex = /[A-Za-z]+/;
