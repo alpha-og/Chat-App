@@ -15,7 +15,6 @@ form.addEventListener('submit', (e) => {
         return res.json();
     })
     .then((session) => {
-        localStorage.setItem("session", JSON.stringify(session));
         window.location.href = "/home";
     })
     .catch((err) => {

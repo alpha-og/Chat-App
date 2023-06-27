@@ -1,6 +1,5 @@
 // module imports
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose"); // required to use an abstraction layer over the 
 // mongodb driver that simplifies code and allows access of mongodb documents as objects in the code
 
@@ -13,21 +12,32 @@ const bodyParser = require('body-parser'); // required for parsing request bodie
 const userModel = require('./models/userModel');
 
 // global constant declarations
-const port = 8000;
-const mongoURI = "mongodb://localhost:27017/";
-const dbName = "ChatApp";
+const maxAge = 1 * 24 * 60 * 60 * 1000
 
+const {
+    NODE_ENV = 'development',
+    PORT = 8000,
+    MONGO_URI = "mongodb://localhost:27017/",
+    DB_NAME = "ChatApp",
+    SESSION_LIFETIME = maxAge,
+    SESSION_NAME = 'session_id',
+    SESSION_SECRET = 'secret',
+} = process.env;
+
+const IN_PRODUCTION = NODE_ENV === 'production';
+
+const app = express();
 
 // establish a connection to the MongoDB database
-mongoose.connect(mongoURI+dbName, {
+mongoose.connect(MONGO_URI+DB_NAME, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }) 
 .then(() => {
-    console.log(`Connected to ${mongoURI+dbName}`)
+    console.log(`Connected to ${MONGO_URI+DB_NAME}`)
     // initiate localserver and listen for requests
-    app.listen(port, () => {
-        console.log(`Listening on port ${port}`)
+    app.listen(PORT, () => {
+        console.log(`Listening on port ${PORT}`)
     });
 })
 .catch((err) => console.log(err));
@@ -37,8 +47,20 @@ app.use(express.static("HTML_files")); // folder for static serving
 app.use(express.static("CSS_files")); // folder for static serving
 app.use(express.static("JS_files")); // folder for static serving
 
-app.use(bodyParser.urlencoded({ extended: false })); // enable the server to parse the body
+app.use(bodyParser.urlencoded({ extended: true })); // enable the server to parse the body
 app.use(express.json())
+app.use(session({
+    name: SESSION_NAME, // assign the store/db a name
+    resave: false, // resave set to false makes it so that the sessions are not sent to the store if they were never modified
+    saveUninitialised: false, // saveUninitialised set to false prevents new sessions with no data from being sent to the store
+    secret: SESSION_SECRET, // stored only only on the server and is sed to sign the cookie to prevent unsolicited changes to the cookie
+    cookie: { // by default the cookie is set to HTTPOnly which prevents client side scripts from accessing the cookie data
+        maxAge: SESSION_LIFETIME, // sets the time duration beyond which the cookie is invalidated
+        sameSite: true, // restricts access of the cookie to the domain in which it was issued
+        secure: IN_PRODUCTION, // secure attribute is used to specify if the cookie is to be sent only on HTTPS
+    }
+}))
+
 // get routes
 app.get("/signup", (req, res) => {
     const filePath = path.join(__dirname,"HTML_files", "signup.html");
@@ -93,9 +115,7 @@ app.post("/signin", async (req, res) => {
     if (currentUser){
         const match = await bcryptjs.compare(password, currentUser.password)
         if (match){
-            const result = await userModel.updateOne({uuid: currentUser.uuid}, {session: {session_uuid: uuidv4(), isAuth: true}})
-            currentUser = await userModel.findOne({email: email});
-            res.json({uuid: currentUser.uuid, session_uuid: currentUser.session.session_uuid, isAuth: currentUser.session.isAuth})
+            res.json({success: true})
         }
         else{
             console.log("Invalid email or password")
@@ -110,7 +130,6 @@ app.post("/signout", async (req, res) => {
     const {uuid, session_uuid, isAuth} = req.body;
     const currentUser = await userModel.findOne({uuid: uuid});
     if (currentUser.session.session_uuid === session_uuid){
-        const result = await userModel.updateOne({uuid: uuid}, {session: {session_uuid: null, session_created: null, isAuth: false}})
         res.redirect("/signin");
     }
 })
