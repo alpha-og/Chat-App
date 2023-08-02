@@ -12,4 +12,3 @@ const app = require("./app");
 app.listen(PORT, () => {
     console.log(`Connected to http://localhost:${PORT}`);
 });
-
