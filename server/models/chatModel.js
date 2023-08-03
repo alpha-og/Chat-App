@@ -5,7 +5,7 @@ const { requiredFieldErrorMsg } = require("../utils/constants");
 const chatSchema = new mongoose.Schema({
     users: [
         {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "users",
         },
     ],

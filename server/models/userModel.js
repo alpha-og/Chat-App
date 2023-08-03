@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const jwt = require("json-web-token");
+const jwt = require("jsonwebtoken");
+const validator = require("validator");
 
 const { requiredFieldErrorMsg } = require("../utils/constants");
 const { JWT_SECRET, JWT_EXPIRY } = process.env;
-console.log(JWT_SECRET, JWT_EXPIRY);
 
 const userSchema = new mongoose.Schema({
-    fname: {
+    name: {
         type: String,
         minLength: [2, "Name must have atleast 2 characters"],
         maxLength: [30, "Name cannot exceed 30 characters"],
@@ -15,16 +15,18 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, requiredFieldErrorMsg("Email")],
+        validate: [validator.isEmail, "Invalid email"],
     },
     password: {
         type: String,
         required: [true, requiredFieldErrorMsg("Password")],
         minLength: [8, "Password must have atleast 8 characters"],
+        select: false,
     },
     avatar: String,
     chats: [
         {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "chats",
         },
     ],
