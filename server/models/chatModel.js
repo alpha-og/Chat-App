@@ -3,20 +3,26 @@ const mongoose = require("mongoose");
 const { requiredFieldErrorMsg } = require("../utils/constants");
 
 const chatSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        default: "Untitled",
+    },
+    description: String,
+    avatar: String,
     users: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: "users",
         },
     ],
-    msgs: [
+    messages: [
         {
             content: {
                 type: String,
                 required: [true, requiredFieldErrorMsg("Message content")],
             },
             sender: {
-                type: Schema.Types.ObjectId,
+                type: mongoose.Schema.Types.ObjectId,
                 ref: "users",
             },
             timeStamp: {
@@ -28,6 +34,10 @@ const chatSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
     },
 });
 

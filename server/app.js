@@ -10,10 +10,10 @@ const urlPrefix = "/api/v1";
 
 const authRoutes = require("./routes/authRoutes");
 app.use(urlPrefix, authRoutes);
-// const chatRoutes = require("./routes/chat");
-// app.use(chatRoutes);
-// const userRoutes = require("./routes/user");
-// app.use(userRoutes);
+const chatRoutes = require("./routes/chatRoutes");
+app.use(urlPrefix, chatRoutes);
+// const userRoutes = require("./routes/userRoutes");
+// app.use(urlPrefix, userRoutes);
 
 const error = require("./middleware/error");
 app.use(error);
