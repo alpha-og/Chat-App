@@ -16,6 +16,7 @@ const getChats = asyncErrorHandler(async (req, res, next) => {
 const createChat = asyncErrorHandler(async (req, res, next) => {
     const { _id } = req.user;
     const { title, description, users } = req.body;
+    users.push(_id);
     let chat = await chatModel.create({
         title,
         description,
